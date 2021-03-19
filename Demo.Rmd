@@ -1,0 +1,68 @@
+---
+title: "Live Demonstration"
+author: "Ronan Machin"
+date: "17/03/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(plotly)
+library(reactable)
+library(crosstalk)
+library(kableExtra)
+```
+
+## Formatting Tables
+
+Below is a handy package for formatting tables (kableExtra). It works intuitively with the tidyverse syntax using a data.frame object.
+
+```{r cars, echo=F}
+head(mtcars) %>%
+  kbl() %>%
+  kable_styling(full_width = FALSE)
+```
+
+## Interative Plots
+
+Below I have combined three packages to demonstrate interactivity within html reports or dashboards. They are Plotly, Reactable & crosstalk.
+
+Plotly is a package for interactive charts, Reactable for reactive tables and crosstalk allows user interaction to be mirrored in the data behind both objects.
+
+
+```{r pressure, echo=FALSE}
+small_df = mtcars %>%
+  mutate(Model = rownames(mtcars)) %>%
+  select(Model, mpg, cyl, drat, wt) %>%
+  na.omit()
+
+rownames(small_df)=NULL
+
+pen_df = SharedData$new(small_df)
+
+plotly_graphic = plot_ly(pen_df,
+                         x = ~wt,
+                         y = ~mpg,
+                         color = ~cyl, 
+                         text = ~Model,
+                         type = "scatter",
+                         mode = "markers") %>%
+  #add_markers() %>%
+  highlight(on = "plotly_selected",
+            off = "plotly_doubleclick")#,
+  #          persistent = FALSE)
+
+plotly_graphic
+
+reactable_table = reactable(pen_df, 
+                            columns = list(
+                              Model = colDef("Model"),
+                              mpg = colDef("Miles per Gallon"),
+                              drat = colDef("DRAT"),
+                              wt = colDef("Weight")))
+
+
+reactable_table
+```
+
