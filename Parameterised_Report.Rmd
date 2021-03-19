@@ -1,0 +1,42 @@
+---
+title: "Paramaterised Reports"
+author: "Ronan Machin"
+date: "17/03/2021"
+output: html_document
+params:
+   data: diamonds # Options: mpg or diamonds
+   toggle: FALSE # Options: TRUE or FALSE
+   year: 2018
+
+---
+
+```{r echo=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+# The `r params$data` Data set was chosen in `r params$year`
+
+In the **`r params$data`** data set we can review a lot of important data. Lets make a visualization!
+
+```{r viz, include=params$toggle, echo= FALSE}
+
+mpg %>%
+ggplot() +
+ aes(x = manufacturer) +
+ geom_bar(fill = "#0c4c8a") +
+ theme_minimal()
+
+```
+
+```{r viz2, include=!params$toggle, echo=FALSE}
+
+diamonds %>%
+ggplot() +
+ aes(x = cut, y = color, fill = clarity) +
+ geom_tile(size = 1L) +
+ scale_fill_hue() +
+ theme_minimal()
+
+```
+
